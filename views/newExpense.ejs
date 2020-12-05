@@ -1,0 +1,39 @@
+<%- include('header', {cssFilePath: '/styles.css'}); -%>
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h1>Add a new expense </h1>
+    </div>
+  </div>
+
+  <form action="/expense" method="POST">
+    <div class="form-group">
+      <label for="date">Date:</label><br />
+      <input type="date" id="date" name="date" class="form-control" />
+      <label for="expenseName">Expense name:</label><br />
+      <input type="text" id="expenseName" name="expenseName" class="form-control" />
+      <div class="form-group">
+        <label for="categories_id">Categories:</label><br />
+        <select id="categories_id" name="categories_id" required>
+            <option value="" disabled selected hidden>select</option>
+        <% categories.forEach((element) => { %>
+          <option value="<%= element.id %>"><%= element.name %></option>
+        <% }); %>
+        </select>
+      </div>
+      <label for="amount">Amount:</label><br />
+      <input type="text" id="amount" name="amount" class="form-control" />
+      <label for="vendor">Vendor:</label><br />
+      <input type="text" id="vendor" name="vendor" class="form-control" />
+      <label for="amount">Message:</label><br />
+      <input type="text" id="message" name="message" class="form-control" />
+      <label for="receipt">Receipt Upload:</label><br />
+      <input type="file" id="receipt" name="receipt"/> <br><br>
+    </div>
+
+    <input type="submit" value="Add" class="btn btn-success" />
+  </form>
+</div>
+
+<%- include('footer'); -%>

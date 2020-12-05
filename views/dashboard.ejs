@@ -1,0 +1,56 @@
+<%- include('header', {cssFilePath: '/styles.css'}) -%>
+
+<div class="container">
+  <div class="row margin-top-50">
+    <div class="col-md-2">
+      <aside class="filters">
+        <div class="panel panel-default">
+          <div class="panel-heading">Filter Search</div>
+          <div class="panel-body">
+            <form>
+              <div class="form-group">
+                <ul class="list-group" id="filters">
+                  <li class="filter list-group-item">
+                    <label for="date">Enter a Date</label>
+                    <input class="form-control" id="datetime" type="text" placeholder="1/11/2011">
+                  </li>
+                </ul>
+              </div>
+              <button id="filter-btn" type="submit" class="btn btn-default">Filter Table</button>
+            </form>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <div class="col-md-8 text-right">
+      <div id="table-area" class="">
+        <table id="expense-table" class="table table-striped">
+          <thead>
+            <tr>
+              <th class="table-head">Date</th>
+              <th class="table-head">Expense Name</th>
+              <th class="table-head">Amount</th>
+              <th class="table-head">Category</th>                 
+            </tr>
+          </thead>
+          <tbody>
+            <% expenses.forEach((element) => { %>
+              <tr>
+                <td> <a href ="/expense/<%=element.id%>"><%= moment(element.date).format('LL'); %> </a></td>
+                <td> <%= element.name %> </td>
+                <td> <%= element.amount %> </td>
+                <td> <%= element.categories_name %> </td>
+              </tr>
+            <% }) %>
+            <tr></tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<%- include('footer'); -%>

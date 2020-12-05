@@ -4,16 +4,21 @@ CREATE TABLE "users" (
   "password" VARCHAR(37),
   "name" TEXT,
   "email" TEXT UNIQUE,
-  "created_at" DATE NOT NULL
+  "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+WITH new_expense as (
+INSERT INTO categories (name)
+)
+INSERT INTO expenses (date, name, amount,) VALUES()
 
 CREATE TABLE "expenses" (
   "id" SERIAL PRIMARY KEY,
   "user_id" INT,
-  "category_id" INT,
+  "categories_id" INT,
   "date" DATE NOT NULL,
   "amount" INT,
-  "Message" VARCHAR(255),
+  "message" VARCHAR(255),
   "receipt_id" INT
 );
 
@@ -24,7 +29,7 @@ CREATE TABLE "receipts" (
   "item name" TEXT
 );
 
-CREATE TABLE "Category" (
+CREATE TABLE "categories" (
   "id" SERIAL PRIMARY KEY,
   "name" TEXT
 );

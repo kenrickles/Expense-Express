@@ -1,0 +1,50 @@
+<%- include('header', {cssFilePath: '/styles.css'}); -%>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-10 text-center" id="note-header">
+      <h1>Add Expense</h1>
+    </div>
+  </div>
+</div>
+
+<div class="col-md-12 text-right">
+  <div id="table-area" class="">
+    <table id="expense-table" class="table table-striped">
+      <thead>
+        <tr>
+          <th class="table-head">Date</th>
+          <th class="table-head">Expense Name</th>
+          <th class="table-head">Expense Category</th>
+          <th class="table-head">Amount</th> 
+          <th class="table-head">Receipt</th>   
+          <th class="table-head">Vendor</th>
+          <th class="table-head">Message</th>
+                              
+        </tr>
+      </thead>
+      <tbody>
+        <% expense.forEach((element) => { %>
+          <tr>
+            <td> <%= moment(element.date).format('LL') %> </td>
+            <td> <%= element.name %> </td>
+            <td> <%= element.categories_name %> </td>
+            <td> $<%= element.amount %> </td>
+            <td> <a href ="<%= element.receipt_imagelink%>"> 
+              <% if(element.receipt_imagelink !== null) { %>
+                View Receipt 
+              <% } else { %>
+              <% } %> </a> </td>    
+            <td> <%= element.vendor %> </td>
+            <td> <%= element.message %> </td>
+          </tr>
+        <% }) %>
+        <tr></tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+</div>
+  <br>
