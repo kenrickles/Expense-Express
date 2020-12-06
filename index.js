@@ -41,6 +41,7 @@ const PORT = 3004;
 // overiding post to allow ?method = put or delete
 app.use(methodOverride('_method'));
 // allow the use of `the folder public
+app.use(express.static('public/cssFiles'));
 app.use(express.static('public'));
 // set the view engine to ejs
 app.set('view engine', 'ejs');
@@ -69,7 +70,7 @@ app.get('/dashboard', (req, res) => {
     return;
   }
   // selecting the data to into table
-  const allExpenseQuery = `SELECT expenses.id, expenses.date, expenses.amount, expenses.name, categories.name AS categories_name FROM expenses INNER JOIN categories ON expenses.categories_id = categories.id WHERE expenses.user_id = ${req.cookies.userId}`;
+  const allExpenseQuery = `SELECT expenses.id, expenses.date, expenses.amount, expenses.name,expenses.vendor, categories.name AS categories_name FROM expenses INNER JOIN categories ON expenses.categories_id = categories.id WHERE expenses.user_id = ${req.cookies.userId}`;
 
   // select the data
   pool
@@ -140,7 +141,9 @@ app.post('/expense', (req, res) => {
     })
     .catch((error) => console.log(error.stack));
 });
-
+app.get('/', (req, res) => {
+  res.send('hello');
+});
 app.get('/errorpage', (req, res) => {
   res.render('errorPage');
 });
@@ -271,6 +274,9 @@ app.delete('/logout', (req, res) => {
   res.clearCookie('loggedIn');
   // redirect to login page
   res.redirect('/login');
+});
+app.get('*', (req, res) => {
+  res.render('errorPage');
 });
 app.listen(PORT, () => {
   console.log(`server is listening on port ${PORT}`);
