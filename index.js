@@ -6,6 +6,8 @@ import jsSHA from 'jssha';
 import flash from 'express-flash';
 import session from 'express-session';
 import moment from 'moment';
+import multer from 'multer';
+import path from 'path';
 
 // Storing the Salt
 const SALT = process.env.MY_ENV_VAR;
@@ -60,8 +62,52 @@ app.use(session({
   saveUninitialized: false,
 }));
 app.use(flash());
+// set storage engine
+const storage = multer.diskStorage({
+  destination: './public/uploads/',
+  filename(req, file, cb) {
+    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+  },
+});
+// helper function to check file type
+const checkFileType = (file, cb) => {
+  // allowed extensions
+  const fileTypes = /jpeg|jpg|png|gif/;
+  // check extension
+  const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+  // check mimetype
+  const mimetype = fileTypes.test(file.mimetype);
+  // check file type
+  if (mimetype && extname) {
+    cb(null, true);
+  } else {
+    cb('Error: Images Only!');
+  }
+};
+// initialize upload variable
+const upload = multer({
+  storage,
+  limits: { fileSize: 1000000 },
+  fileFilter(req, file, cb) {
+    checkFileType(file, cb);
+  },
+}).single('myImage');
 /* ======= ROUTES ===== */
-// Render a form that will create a new note.
+// file upload
+app.get('/upload', (req, res) => {
+  res.render('fileUpload.ejs');
+});
+app.post('/upload', (req, res) => {
+  upload(req, res, (error) => {
+    if (error) {
+      res.render('fileUpload', { msg: error });
+    } else if (req.file === undefined) {
+      res.render('fileUpload', { msg: 'Error: No File Selected!' });
+    } else {
+      res.render('fileUpload', { msg: 'Receipt Uploaded!', file: `uploads/${req.file.filename}` });
+    }
+  });
+});
 
 // Render user mainpage after login
 app.get('/dashboard', (req, res) => {
