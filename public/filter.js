@@ -2,25 +2,27 @@ function sortTableByColumn(table, column, asc = true) {
   const dirModifier = asc ? 1 : -1;
   const tBody = table.tBodies[0];
   const rows = Array.from(tBody.querySelectorAll('tr'));
-
   // Sort each row
-  let sortedRows;
-  if (column !== 1) {
-    sortedRows = rows.sort((a, b) => {
-      const aColText = a.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
-      const bColText = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+  // const sortedRows = rows.sort((a, b) => {
+  //   const aColText = a.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+  //   const bColText = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+  //   if (isNaN(aColText) && isNaN(bColText) !== true) {
 
-      return aColText > bColText ? (1 * dirModifier) : (-1 * dirModifier);
-    });
-  }
-  else {
-    sortedRows = rows.sort((a, b) => {
-      const aColPrice = parseInt(a.querySelector(`td:nth-child(${column + 1})`).textContent.trim().replace('$', ''), 10);
-      const bColPrice = parseInt(b.querySelector(`td:nth-child(${column + 1})`).textContent.trim().replace('$', ''), 10);
-
+  //   }
+  //   return aColText > bColText ? (1 * dirModifier) : (-1 * dirModifier);
+  // });
+  const sortedRows = rows.sort((a, b) => {
+    const aColText = a.querySelector(`td:nth-child(${column + 1})`).textContent.trim().toLowerCase();
+    const bColText = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim().toLowerCase();
+    console.log(/\d/.test(aColText));
+    if (/\d/.test(aColText) === true && /\d/.test(bColText) === true) {
+      const aColPrice = parseFloat(a.querySelector(`td:nth-child(${column + 1})`).textContent.trim().replace('$', ''), 10);
+      const bColPrice = parseFloat(b.querySelector(`td:nth-child(${column + 1})`).textContent.trim().replace('$', ''), 10);
       return aColPrice > bColPrice ? (1 * dirModifier) : (-1 * dirModifier);
-    });
-  }
+    }
+    return aColText > bColText ? (1 * dirModifier) : (-1 * dirModifier);
+  });
+
   // Remove all existing TRs from the table
   while (tBody.firstChild) {
     tBody.removeChild(tBody.firstChild);

@@ -31,6 +31,7 @@ class TableCSVExporter {
 
   // tells us the longest row length because CSV needs to know as some row might not have everything
   findLongestRowLength() {
+    // eslint-disable-next-line max-len
     return this.rows.reduce((length, row) => (row.childElementCount > length ? row.childElementCount : length), 0);
   }
 
@@ -45,6 +46,7 @@ class TableCSVExporter {
     return parsedValue;
   }
 }
+
 // select table to export
 const dataTable = document.getElementById('dataTable');
 // select button to export

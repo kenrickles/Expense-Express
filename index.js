@@ -8,6 +8,9 @@ import session from 'express-session';
 import moment from 'moment';
 import multer from 'multer';
 import path from 'path';
+import fetch from 'node-fetch';
+import FormData from 'form-data';
+import fs from 'fs';
 
 // Storing the Salt
 const SALT = process.env.MY_ENV_VAR;
@@ -38,8 +41,85 @@ const pool = new Pool(poolConfig);
 const app = express();
 // adding moment to ejs
 app.locals.moment = moment;
+// OCR Usage
+const internals = {
+  url: 'https://api.taggun.io/api/receipt/v1/simple/file',
+  filePath: '/Users/kenrick/Development/SWE1/week7/Project2/expense-express/public/uploads/Short-Grocery-Receipt-Format-3.jpg',
+  taggunApiKey: '69f116403a5911ebafc7c5a18819396c',
+};
+
+function getContentType(filePath) {
+  const fileExt = path.extname(filePath);
+  switch (fileExt.toLocaleLowerCase()) {
+    case '.png':
+      return 'image/png';
+    case '.pdf':
+      return 'application/pdf';
+    default:
+      return 'image/jpg';
+  }
+}
+function createFormData(filePath) {
+  const filename = path.basename(filePath);
+  const fileStream = fs.createReadStream(filePath, { autoClose: true });
+  const formData = new FormData();
+
+  // Add any other POST properties that you require
+  // Go to https://api.taggun.io to see what other POST properties you require.
+  formData.append('file', fileStream, {
+    filename,
+    contentType: getContentType(filePath),
+  });
+
+  formData.append('refresh', 'false');
+
+  return formData;
+}
+
+const form = new FormData();
+form.append('file', 'Short-Grocery-Receipt-Format-3.jpg');
+
+fetch('https://taggun.p.rapidapi.com/api/receipt/v1/verbose/file', {
+  method: 'POST',
+  headers: {
+    'content-type': 'multipart/form-data; boundary=---011000010111000001101001',
+    apikey: internals.taggunApiKey,
+    'x-rapidapi-host': 'taggun.p.rapidapi.com',
+  },
+})
+  .then((response) => {
+    console.log(response);
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+
+// app.get('/ocr', async (req, res) => {
+//   const { filePath } = internals;
+
+//   try {
+//     const postBody = createFormData(filePath);
+
+//     const response = await fetch(internals.url, {
+//       headers: {
+//         accept: 'application/json',
+//         apikey: internals.taggunApiKey,
+//         contentType: getContentType(filePath),
+//       },
+//       method: 'POST',
+//       body: postBody,
+//     });
+
+//     const result = await response.json();
+//     console.log(result);
+//   } catch (err) {
+//     console.error(err);
+//   }
+//   res.send('hello');
+// })();
+
 // setting the port number
-const PORT = 3004;
+const PORT = 3004 || process.env.MY_ENV_VAR;
 // overiding post to allow ?method = put or delete
 app.use(methodOverride('_method'));
 // allow the use of `the folder public
