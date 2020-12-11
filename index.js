@@ -11,6 +11,7 @@ import path from 'path';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 import fs from 'fs';
+import axios from 'axios';
 
 // Storing the Salt
 const SALT = process.env.MY_ENV_VAR;
@@ -42,11 +43,6 @@ const app = express();
 // adding moment to ejs
 app.locals.moment = moment;
 // OCR Usage
-const internals = {
-  url: 'https://api.taggun.io/api/receipt/v1/simple/file',
-  filePath: '/Users/kenrick/Development/SWE1/week7/Project2/expense-express/public/uploads/Short-Grocery-Receipt-Format-3.jpg',
-  taggunApiKey: '69f116403a5911ebafc7c5a18819396c',
-};
 
 function getContentType(filePath) {
   const fileExt = path.extname(filePath);
@@ -76,48 +72,6 @@ function createFormData(filePath) {
   return formData;
 }
 
-const form = new FormData();
-form.append('file', 'Short-Grocery-Receipt-Format-3.jpg');
-
-fetch('https://taggun.p.rapidapi.com/api/receipt/v1/verbose/file', {
-  method: 'POST',
-  headers: {
-    'content-type': 'multipart/form-data; boundary=---011000010111000001101001',
-    apikey: internals.taggunApiKey,
-    'x-rapidapi-host': 'taggun.p.rapidapi.com',
-  },
-})
-  .then((response) => {
-    console.log(response);
-  })
-  .catch((err) => {
-    console.error(err);
-  });
-
-// app.get('/ocr', async (req, res) => {
-//   const { filePath } = internals;
-
-//   try {
-//     const postBody = createFormData(filePath);
-
-//     const response = await fetch(internals.url, {
-//       headers: {
-//         accept: 'application/json',
-//         apikey: internals.taggunApiKey,
-//         contentType: getContentType(filePath),
-//       },
-//       method: 'POST',
-//       body: postBody,
-//     });
-
-//     const result = await response.json();
-//     console.log(result);
-//   } catch (err) {
-//     console.error(err);
-//   }
-//   res.send('hello');
-// })();
-
 // setting the port number
 const PORT = 3004 || process.env.MY_ENV_VAR;
 // overiding post to allow ?method = put or delete
@@ -131,6 +85,8 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: false }));
 // middleware that allows cookies to be parsed
 app.use(cookieParser());
+//
+app.use(express.json({ limit: '1mb' }));
 // use to flash message back
 app.use(session({
   /* the longer key it is the more random it is, the more secure it is.
@@ -173,22 +129,33 @@ const upload = multer({
   },
 }).single('myImage');
 /* ======= ROUTES ===== */
-// file upload
-app.get('/upload', (req, res) => {
-  res.render('fileUpload.ejs');
+app.get('/ocr', (req, res) => {
+  res.render('post');
 });
-app.post('/upload', (req, res) => {
-  upload(req, res, (error) => {
-    if (error) {
-      res.render('fileUpload', { msg: error });
-    } else if (req.file === undefined) {
-      res.render('fileUpload', { msg: 'Error: No File Selected!' });
-    } else {
-      res.render('fileUpload', { msg: 'Receipt Uploaded!', file: `uploads/${req.file.filename}` });
-    }
-  });
-});
+app.post('/ocr', (req, res) => {
+  const data = new FormData();
+  data.append('file', fs.createReadStream('/Users/kenrick/Development/SWE1/week7/Project2/expense-express/public/uploads/myImage-1607605686628.jpg'));
 
+  const config = {
+    method: 'post',
+    url: 'https://api.taggun.io/api/receipt/v1/verbose/file',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      apikey: '69f116403a5911ebafc7c5a18819396c',
+      ...data.getHeaders(),
+    },
+    data,
+  };
+
+  axios(config)
+    .then((response) => {
+      console.log(response.data.totalAmount.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  // res.end();
+});
 // Render user mainpage after login
 app.get('/dashboard', (req, res) => {
   if (req.cookies.loggedIn === undefined) {
@@ -214,7 +181,7 @@ app.get('/expense/:id', (req, res) => {
     res.redirect('errorPage');
   }
   const { id } = req.params;
-  const sqlExpenseQuery = `SELECT expenses.date, expenses.amount, expenses.name, expenses.message, expenses.vendor, categories.name AS categories_name, receipts.imgurl AS receipt_imagelink FROM expenses 
+  const sqlExpenseQuery = `SELECT expenses.id, expenses.date, expenses.amount, expenses.name, expenses.message, expenses.vendor, categories.name AS categories_name, receipts.imgurl AS receipt_imagelink FROM expenses 
   INNER JOIN categories 
   ON expenses.categories_id = categories.id 
   LEFT JOIN receipts 
@@ -227,10 +194,89 @@ app.get('/expense/:id', (req, res) => {
     .then((result) => {
       const expense = result.rows;
       const expenseData = { expense };
-      // res.send('hello');
       res.render('expense', expenseData);
     })
     .catch((error) => console.log(error.stack));
+});
+// delete expense route
+app.delete('/expense/:id/delete', (req, res) => {
+  // storing the id from user request
+  const { id } = req.params;
+  // delete query
+  const deleteSQL = (`DELETE FROM expenses where expenses.id=${id}`);
+  // query to delete from table
+  pool
+    .query(deleteSQL)
+    .then(() => {
+      // redirect back to dashboard
+      res.redirect('/dashboard');
+    })
+    .catch((error) => console.log(error.stack));
+});
+
+// file upload
+let expId = '';
+app.get('/expense/:id/upload/', (req, res) => {
+  if (req.cookies.loggedIn === undefined) {
+    res.redirect('errorPage');
+  }
+  expId = req.params.id;
+  res.render('fileUpload.ejs');
+});
+app.post('/expense/:id/upload/', (req, res) => {
+  if (req.cookies.loggedIn === undefined) {
+    res.redirect('errorPage');
+  }
+  upload(req, res, (error) => {
+    if (error) {
+      res.render('fileUpload', { msg: error });
+    } else if (req.file === undefined) {
+      res.render('fileUpload', { msg: 'Error: No File Selected!' });
+    } else {
+      const inputValue = [`/uploads/${req.file.filename}`];
+      const uploadQuery = 'INSERT INTO receipts (imgurl) VALUES ($1) RETURNING *;';
+      pool
+        .query(uploadQuery, inputValue)
+        .then((result) => {
+          const receiptIDValue = [result.rows[0].id];
+          console.log(receiptIDValue);
+          console.log(expId);
+          const receiptIDQuery = `UPDATE expenses SET receipt_id = ($1) WHERE id = ${expId};`;
+          pool
+            .query(receiptIDQuery, receiptIDValue)
+            .catch(((err2) => console.log(err2.stack)));
+        }).catch((err) => console.log(err.stack));
+      res.redirect(`/expense/${expId}`);
+      //
+    }
+  });
+});
+
+app.get('/expense/:id/edit', (req, res) => {
+  if (req.cookies.loggedIn === undefined) {
+    res.redirect('errorPage');
+  }
+  const { id } = req.params;
+  const sqlExpenseQuery = `SELECT expenses.id, expenses.date, expenses.amount, expenses.name, expenses.message, expenses.vendor, categories.name AS categories_name, receipts.imgurl AS receipt_imagelink FROM expenses 
+  INNER JOIN categories 
+  ON expenses.categories_id = categories.id 
+  LEFT JOIN receipts 
+  ON expenses.receipt_id = receipts.id 
+  WHERE expenses.user_id = ${req.cookies.userId}
+  AND 
+  expenses.id = ${id}`;
+  pool
+    .query(sqlExpenseQuery)
+    .then((result) => {
+      const expense = result.rows;
+      const expenseData = { expense };
+      console.log(expenseData);
+      res.render('editExpense', expenseData);
+    })
+    .catch((error) => console.log(error.stack));
+});
+app.put('/expense/:id/edit', (req, res) => {
+  const { id } = req.params;
 });
 
 app.get('/expense', (req, res) => {
@@ -392,6 +438,7 @@ app.post('/login', (req, res) => {
     // redirect
     res.redirect('/dashboard');
   }); });
+
 app.delete('/logout', (req, res) => {
   console.log('request to logout came in');
   // clear all the cookies
@@ -401,9 +448,10 @@ app.delete('/logout', (req, res) => {
   // redirect to login page
   res.redirect('/login');
 });
-app.get('*', (req, res) => {
-  res.render('errorPage');
-});
+
+// app.get('*', (req, res) => {
+//   res.render('errorPage');
+// });
 app.listen(PORT, () => {
   console.log(`server is listening on port ${PORT}`);
 });

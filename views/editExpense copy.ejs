@@ -1,0 +1,56 @@
+<%- include('header', {cssFilePath: '/styles.css'}); -%>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-10 text-center" id="note-header">
+      <h1>Edit Expense</h1>
+    </div>
+  </div>
+</div>
+
+<div class="table-responsive table mt-2 table table-striped table-hover table-sortable th">
+  <div id="table-area" class="table my-0">
+    <table id="dataTable" class="table my-0" >
+      <thead>
+          <tr>
+            <th class="table-head">Date</th>
+            <th class="table-head">Expense Name</th>
+            <th class="table-head">Expense Category</th>
+            <th class="table-head">Amount</th> 
+            <th class="table-head">Receipt</th>   
+            <th class="table-head">Vendor</th>
+            <th class="table-head">Message</th>
+          </tr>
+      </thead>
+      <tbody class="text-center">
+        <tr>
+    <form action="/expense/<%= expense.id %>?_method=PUT" method="POST">
+      <td><input form="form1" id="date" name="date" value = "<%=moment(expense[0].date).format('DD/MM/YYYY');%> "> </td>
+      <td><input form1="form1" type="text" id="expenseName" name="expenseName" value = "<%=expense[0].name%>"></td>
+      <td><input form1="form1" type="text" id="Category" name="Category" value = "<%=expense[0].categories_name%>"></td>
+      <td><input form1="form1" type="text" id="amount" name="amount" value = "<%=expense[0].amount%>"></td>
+      <td> <a href ="<%= expense[0].receipt_imagelink%>"> 
+        <% if(expense[0].receipt_imagelink !== null) { %>
+          View Receipt 
+        <% } else { %>
+        <% } %> </a> </td>    
+      <td><input form1="form1" type="text" id="vendor" name="vendor" value = "<%=expense[0].vendor%>"></td>
+
+      <td><input form1="form1" type="text" id="message" name="message" value = "<%=expense[0].message%>"></td>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td><br>
+        <td><br><br><a href="/<%=expense[0].id%>/upload" class="btn btn-outline-success" role="button"> Add Receipt</a><br><br>
+        <input type="submit" id="form-button"value="Submit" class = "btn btn-success"></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </form>
+      </div>
+      </div>
+      </div>
+    
+</body>
+</html>

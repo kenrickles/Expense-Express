@@ -5,8 +5,16 @@
     <div class="container-fluid">
       <h3 class="text-dark mb-4">Expense Overview</h3>
       <div class="card shadow">
-          <div class="card-header py-3">
+          <div class="card-header py-3 row">
+            <div class="col-md-3">
               <p class="text-primary m-0 font-weight-bold">Expense Info</p>
+            </div>
+              <div class="col-md-9">
+                <div class="text-md-right">
+                  <a href="/expense" class="btn btn-outline-success" role="button"> Add New Expense</a>
+                  <button type="button" class="btn btn-success" id="btnExportToCSV">Export to CSV</button>
+                </div>
+            </div>
           </div>
           <div class="card-body">
               <div class="row">
@@ -14,14 +22,11 @@
                       <div>
                         <label>Show&nbsp;<select class="form-control form-control-sm custom-select custom-select-sm"><option value="10" selected="">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select>&nbsp;</label></div>
                   </div>
-                  <div class="col-md-6">
+                  
+                  <div class="col-md-9">
                       <div class="text-md-right">
-                        <label><input type="search"  name="search" id="search" class="form-control form-control-sm"  placeholder="Search Expense"></label></div>
+                        <label><input type="search"  name="search" id="search" class="form-control form-control-sm"  placeholder="Search Expense"></label><br></div><br>
                   </div>
-                  <div class="col-md-2">
-                    <div class="text-md-right">
-                      <button id="btnExportToCSV" type="button" class="btn btn-sucess">Export to CSV</button>
-                </div>
               </div>
               <div class="table-responsive table mt-2 table table-striped table-hover table-sortable th"  >
                   <table id="dataTable" class="table my-0" >
@@ -32,17 +37,18 @@
                               <th class="table-head">Vendor</th>
                               <th class="table-head">Amount</th>
                               <th class="table-head">Category</th>
+                              <th></th>
                           </tr>
                       </thead>
                       <tbody>
                           <% expenses.forEach((element) => { %>
                             <tr>
-                              <td> <a href ="/expense/<%=element.id%>"><%=moment(element.date).format('DD/MM/YYYY');%> </a></td>
+                              <td><%=moment(element.date).format('DD/MM/YYYY');%> </a></td>
                               <td class= "expenseName"><%=element.name%></td>
                               <td><%=element.vendor%></td>
                               <td>$<%=element.amount%></td>
                               <td><%=element.categories_name%></td>
-                              <td></td>
+                              <td><a class="btn btn-outline-info" href="/expense/<%=element.id%>" role=0"button">View</a></td>
                             </tr>
                           <% }) %>
                       </tbody>
@@ -80,7 +86,7 @@
 </div>
 
 <!-- uncompleted code -->
-<div class="container">
+<!-- <div class="container">
   <div class="row margin-top-50">
     <div class="col-md-2">
       <aside class="filters">
@@ -102,7 +108,7 @@
         </div>
       </aside>
     </div>
-  </div>
+  </div> -->
 </div>
 <script src="/filter.js"></script>
 <script src="/search.js"></script>

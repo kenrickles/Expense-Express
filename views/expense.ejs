@@ -3,11 +3,10 @@
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-10 text-center" id="note-header">
-      <h1>Add Expense</h1>
+      <h1>View Expense: <%=expense[0].name%> </h1>
     </div>
   </div>
 </div>
-
 <div class="col-md-12 text-right">
   <div id="table-area" class="">
     <table id="expense-table" class="table table-striped">
@@ -38,11 +37,21 @@
             <td> <%= element.vendor %> </td>
             <td> <%= element.message %> </td>
           </tr>
-        <% }) %>
-        <tr></tr>
-
+          <tr></tr>
       </tbody>
     </table>
+      <% }) %>
+  </div>
+  <div class="container text-right">
+    <form action="<%= expense[0].id %>/delete?_method=DELETE"method="POST">
+      <% if(expense[0].receipt_imagelink !== null) { %>
+        <a href="/expense/<%= expense[0].id %>/upload" class="btn btn-outline-success" role="button"> Add Receipt</a>
+        <% } else { %>
+           <a href="/expense/<%= expense[0].id %>/upload/" class="btn btn-outline-success" role="button"> Edit Receipt</a>
+          <% } %> 
+      <a href="/expense/<%=expense[0].id%>/edit" class="btn btn-outline-success" role="button"> Edit</a>
+    <input type="submit" value="Delete"class="btn btn-danger delete-button"/>
+  </form>
   </div>
 </div>
 </div>

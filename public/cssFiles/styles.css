@@ -4,6 +4,26 @@ body {
   /* background-image: url("https://images.pexels.com/photos/1721675/pexels-photo-1721675.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"); */
 }
 
+#date {
+  width: 50%;
+  text-align: center;
+}
+#expenseName {
+  width: 75%;
+  text-align: center;
+}
+#Category {
+  width: 65%;
+  text-align: center;
+}
+#amount {
+  width: 35%;
+  text-align: center;
+}
+#vendor {
+  width: 65%;
+  text-align: center;
+}
 #table-area th {
   text-align: center;
 }
