@@ -1,27 +1,40 @@
 <%- include('headerNoLogin', {cssFilePath: '/login.css'}); -%>
 
-<div class="container text-center justify-content-md-center">
-<h1> Expense Express</h1>
-<ul><% if(messages.success_msg) { %> 
-  <li><%= messages.success_msg %></li>
-<% } %> 
-<% if(typeof errors != 'undefined') { %>
-  <% errors.forEach(error => { %>
-  <li><%= error.message %></li>
-  <% }) %> 
-<% } %>
-</ul>
-<form action="/login" method = "POST">
-<div>
-  <input type="email" id="email" name="email" placeholder="Email" required>
-</div>
-<div>
-  <input type="password" id="password" name="password" placeholder="Password" required>
-</div>
-<div>
-  <input type="submit" value="Login" />
-</div>
-<a href="/signup">Register</a>
-</form>
-</div>
+<body class="bg-gradient-primary" style="background: rgb(255,255,255);">
+      <div class="row justify-content-center">
+          <div class="col-md-9 col-lg-12 col-xl-10">
+              <div class="card shadow-lg o-hidden border-0 my-5">
+                  <div class="card-body p-0">
+                      <div class="row">
+                          <div class="col-lg-6 col-xl-6 offset-xl-3">
+                              <div class="p-5">
+                                  <div class="text-center">
+                                      <h4 class="text-dark mb-4">Welcome Back!</h4>
+                                  </div>
+                                  <div class="container">
+                                    <ul><% if(messages.success_msg) { %> 
+                                      <li><%= messages.success_msg %></li>
+                                    <% } %> 
+                                    <% if(typeof errors != 'undefined') { %>
+                                      <% errors.forEach(error => { %>
+                                      <li><%= error.message %></li>
+                                      <% }) %> 
+                                    <% } %>
+                                    </ul>
+                                  <form class="user" action="/login" method = "POST">
+                                      <div class="form-group">
+                                        <input class="form-control form-control-user" type="email" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter Email Address..." required></div>
+                                      <div class="form-group"><input class="form-control form-control-user" type="password" id="password" name="password" placeholder="Password" required></div>
+                                      <button class="btn btn-primary btn-block text-white btn-user" type="submit">Login</button>
+                                      <hr>
+                                  </form>
+                                  <div class="text-center"><a class="small" href="/signup">Create an Account!</a></div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
 <%- include('footer'); -%>

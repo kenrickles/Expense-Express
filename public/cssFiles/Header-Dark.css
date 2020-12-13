@@ -9,6 +9,8 @@
 .navlinks {
   margin-left: 1300px;
 }
+.sign-up-button {
+}
 .header-dark .navbar {
   background: black;
   color: #fff;
@@ -103,7 +105,7 @@
 
 .header-dark .navbar .action-button,
 .header-dark .navbar .action-button:active {
-  background: #208f8f;
+  background: #007bff;
   border-radius: 20px;
   font-size: inherit;
   color: #fff;
@@ -115,7 +117,7 @@
 }
 
 .header-dark .navbar .action-button:hover {
-  background: #269d9d;
+  background: #0b519d;
 }
 
 .header-dark .navbar .form-inline label {
