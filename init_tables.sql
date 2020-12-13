@@ -30,3 +30,4 @@ CREATE TABLE "categories" (
 );
 
 
+sudo DB_PASSWORD='newPassword' ENV='PRODUCTION' node index.js 80
