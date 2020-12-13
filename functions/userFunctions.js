@@ -111,7 +111,7 @@ export function userSignUp(req, res) {
       `SELECT * FROM users
       WHERE email = $1`, [email], (error, result) => {
         if (error) {
-          throw error;
+          console.log(error);
         }
         console.log(result.rows);
         // validation to see if email has been registered
@@ -125,7 +125,7 @@ export function userSignUp(req, res) {
             VALUES ($1, $2, $3)
             RETURNING id, password`, [name, email, hashedPassword], (err, results) => {
               if (err) {
-                throw err;
+                console.log(err);
               }
               console.log(results.rows);
               req.flash('success_msg', 'You are now registered. Please log in');
