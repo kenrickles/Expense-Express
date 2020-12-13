@@ -7,12 +7,14 @@
       <div class="card shadow">
           <div class="card-header py-3 row">
             <div class="col-md-3">
-              <p class="text-primary m-0 font-weight-bold">Expense Info</p>
             </div>
               <div class="col-md-9">
                 <div class="text-md-right">
-                  <a href="/expense" class="btn btn-outline-success" role="button"> Add New Expense</a>
-                  <button type="button" class="btn btn-success" id="btnExportToCSV">Export to CSV</button>
+                  <form class="cloud-form" action="/upload" method="GET">
+                    <input type="hidden" name="expenseId" id="expenseId" value=undefined>
+                    <input class="btn btn-outline-primary" type="submit" value="Receipt Scan"/>
+                  <a href="/expense" class="btn btn-outline-primary" role="button"> Add New Expense</a>
+                  <button type="button" class="btn btn-primary" id="btnExportToCSV">Export to CSV</button>
                 </div>
             </div>
           </div>
@@ -48,7 +50,7 @@
                               <td><%=element.vendor%></td>
                               <td>$<%=element.amount%></td>
                               <td><%=element.categories_name%></td>
-                              <td><a class="btn btn-outline-info" href="/expense/<%=element.id%>" role=0"button">View</a></td>
+                              <td><a class="btn btn-outline-primary" href="/expense/<%=element.id%>" role="button">View</a></td>
                             </tr>
                           <% }) %>
                       </tbody>

@@ -44,14 +44,18 @@
   </div>
   <div class="container text-right">
     <form action="<%= expense[0].id %>/delete?_method=DELETE"method="POST">
-      <% if(expense[0].receipt_imagelink !== null) { %>
-        <a href="/expense/<%= expense[0].id %>/upload" class="btn btn-outline-success" role="button"> Add Receipt</a>
-        <% } else { %>
-           <a href="/expense/<%= expense[0].id %>/upload/" class="btn btn-outline-success" role="button"> Edit Receipt</a>
-          <% } %> 
-      <a href="/expense/<%=expense[0].id%>/edit" class="btn btn-outline-success" role="button"> Edit</a>
     <input type="submit" value="Delete"class="btn btn-danger delete-button"/>
   </form>
+  <form class="cloud-form" action="/upload" method="GET">
+    <input type="hidden" name="expenseId" id="expenseId" value="<%= expense[0].id %>">
+    <% if(expense[0].receipt_imagelink !== null) { %>
+      <input class="btn btn-outline-success" type="submit" value="Edit Receipt"/>
+      <% } else { %>
+        <input class="btn btn-outline-success" type="submit" value="Add Receipt"/>
+        <% } %> 
+    <a href="/expense/<%=expense[0].id%>/edit" class="btn btn-outline-success" role="button"> Edit</a>
+  </form>
+      
   </div>
 </div>
 </div>

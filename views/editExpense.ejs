@@ -23,8 +23,8 @@
       </thead>
       <tbody class="text-center">
         <tr>
-    <form action="/expense/<%= expense.id %>?_method=PUT" method="POST">
-      <td><input form="form1" id="date" name="date" value = "<%=moment(expense[0].date).format('DD/MM/YYYY');%> "> </td>
+    <form action="/expense/<%=expense[0].id%>/edit?_method=PUT" method="POST">
+      <td><input form="form1" id="date" name="date" value="<%=moment(expense[0].date).format('DD/MM/YYYY');%>"> </td>
       <td><input form1="form1" type="text" id="expenseName" name="expenseName" value = "<%=expense[0].name%>"></td>
       <td><input form1="form1" type="text" id="Category" name="Category" value = "<%=expense[0].categories_name%>"></td>
       <td><input form1="form1" type="text" id="amount" name="amount" value = "<%=expense[0].amount%>"></td>
@@ -41,11 +41,6 @@
         <td></td>
         <td></td><br>
         <td><br><br>
-          <% if(expense[0].receipt_imagelink !== null) { %>
-          <a href="/expense/<%= expense[0].id %>/upload" class="btn btn-outline-success" role="button"> Edit Receipt</a><br><br>
-          <% } else { %>
-             <a href="/expense/<%= expense[0].id %>/upload/" class="btn btn-outline-success" role="button"> Edit Receipt</a><br><br>
-            <% } %> 
         <input type="submit" id="form-button"value="Submit" class = "btn btn-success"></td>
         <td></td>
         <td></td>

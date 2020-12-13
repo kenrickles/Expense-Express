@@ -42,27 +42,52 @@ const pool = new Pool(poolConfig);
 const app = express();
 // adding moment to ejs
 app.locals.moment = moment;
+// OCR Usage
+
+function getContentType(filePath) {
+  const fileExt = path.extname(filePath);
+  switch (fileExt.toLocaleLowerCase()) {
+    case '.png':
+      return 'image/png';
+    case '.pdf':
+      return 'application/pdf';
+    default:
+      return 'image/jpg';
+  }
+}
+function createFormData(filePath) {
+  const filename = path.basename(filePath);
+  const fileStream = fs.createReadStream(filePath, { autoClose: true });
+  const formData = new FormData();
+
+  // Add any other POST properties that you require
+  // Go to https://api.taggun.io to see what other POST properties you require.
+  formData.append('file', fileStream, {
+    filename,
+    contentType: getContentType(filePath),
+  });
+
+  formData.append('refresh', 'false');
+
+  return formData;
+}
 
 // setting the port number
 const PORT = 3004 || process.env.MY_ENV_VAR;
-
 // overiding post to allow ?method = put or delete
 app.use(methodOverride('_method'));
-
 // allow the use of `the folder public
 app.use(express.static('public/cssFiles'));
 app.use(express.static('public'));
 app.use(express.static('public/uploads'));
-
 // set the view engine to ejs
 app.set('view engine', 'ejs');
-
 // accepting request to form the data
 app.use(express.urlencoded({ extended: false }));
-
 // middleware that allows cookies to be parsed
 app.use(cookieParser());
-
+//
+app.use(express.json({ limit: '1mb' }));
 // use to flash message back
 app.use(session({
   /* the longer key it is the more random it is, the more secure it is.
@@ -104,11 +129,10 @@ const upload = multer({
     checkFileType(file, cb);
   },
 }).single('myImage');
-// OCR helper function
-const ocr = (req, res, receiptID) => {
+const ocr = (req, res) => {
   const data = new FormData();
-  console.log(req.file.id);
-  data.append('file', fs.createReadStream(`public/uploads/${req.file.filename}`));
+  data.append('file', fs.createReadStream('/Users/kenrick/Development/SWE1/week7/Project2/expense-express/public/uploads/unnamed.jpg'));
+
   const config = {
     method: 'post',
     url: 'https://api.taggun.io/api/receipt/v1/verbose/file',
@@ -130,8 +154,7 @@ const ocr = (req, res, receiptID) => {
       pool
         .query(categoriesQuery)
         .then((result) => {
-          console.log(receiptID);
-          res.render('newExpenseOCR', { ocrData, categories: result.rows, receiptID });
+          res.render('newExpenseOCR', { ocrData, categories: result.rows });
         })
         .catch((error) => console.log(error.stack));
     }); };
@@ -205,6 +228,7 @@ app.get('/upload', (req, res) => {
   if (req.cookies.loggedIn === undefined) {
     res.redirect('errorPage');
   }
+  console.log('banana');
   const expId = req.query.expenseId;
   res.render('fileupload', { expId });
 });
@@ -219,7 +243,7 @@ app.post('/upload', (req, res) => {
       res.render('fileUpload', { msg: error });
     } else if (req.file === undefined) {
       res.render('fileUpload', { msg: 'Error: No File Selected!' });
-    } else if (expId !== 'undefined') {
+    } else if (expId != undefined) {
       const inputValue = [`/uploads/${req.file.filename}`];
       const uploadQuery = 'INSERT INTO receipts (imgurl) VALUES ($1) RETURNING *;';
       pool
@@ -227,22 +251,15 @@ app.post('/upload', (req, res) => {
         .then((result) => {
           const receiptIDValue = [result.rows[0].id];
           console.log(receiptIDValue);
-          const receiptIDQuery = `UPDATE expenses SET receipt_id = ($1) WHERE id = ${expId};`;
-          pool
-            .query(receiptIDQuery, receiptIDValue)
-            .catch(((err2) => console.log(err2.stack)));
-          res.redirect(`/expense/${expId}`);
+          if (receiptIDValue !== 'undefined') {
+            const receiptIDQuery = `UPDATE expenses SET receipt_id = ($1) WHERE id = ${expId};`;
+            pool
+              .query(receiptIDQuery, receiptIDValue)
+              .catch(((err2) => console.log(err2.stack)));
+            res.redirect(`/expense/${expId}`);
+          }
         }).catch((err) => console.log(err.stack));
-    } else if (expId === 'undefined') {
-      const inputValue = [`/uploads/${req.file.filename}`];
-      const uploadQuery = 'INSERT INTO receipts (imgurl) VALUES ($1) RETURNING *;';
-      pool
-        .query(uploadQuery, inputValue)
-        .then((result) => {
-          const receiptIDValue = result.rows[0];
-          console.log(receiptIDValue, 'receipt id');
-          ocr(req, res, receiptIDValue);
-        });
+      res.redirect(`/expense/${expId}`);
     }
   });
 });
@@ -265,24 +282,13 @@ app.get('/expense/:id/edit', (req, res) => {
     .then((result) => {
       const expense = result.rows;
       const expenseData = { expense };
+      console.log(expenseData);
       res.render('editExpense', expenseData);
     })
     .catch((error) => console.log(error.stack));
 });
 app.put('/expense/:id/edit', (req, res) => {
   const { id } = req.params;
-  const {
-    amount, expenseName, message, vendor,
-  } = req.body;
-  console.log(JSON.parse(JSON.stringify(req.body)));
-  const updatedValues = [amount, expenseName, message, vendor];
-  const updateExpenseQuery = `UPDATE expenses SET amount = $1, name = $2, message = $3, vendor = $4 WHERE id=${id}`;
-  pool
-    .query(updateExpenseQuery, updatedValues)
-    .then((result) => {
-      res.redirect(`/expense/${id}`);
-    })
-    .catch((error) => console.log(error.stack));
 });
 
 app.get('/expense', (req, res) => {
@@ -302,16 +308,16 @@ app.post('/expense', (req, res) => {
   if (req.cookies.loggedIn === undefined) {
     res.redirect('errorPage');
   }
-  console.log(req.body);
   const { userId } = req.cookies;
   const {
     // eslint-disable-next-line camelcase
-    date, expenseName, categories_id, amount, vendor, message, receiptId,
+    date, expenseName, categories_id, amount, vendor, message,
   } = req.body;
+  console.log(req.body);
   // eslint-disable-next-line camelcase
-  const inputValue = [date, expenseName, amount, vendor, categories_id, userId, message, receiptId];
+  const inputValue = [date, expenseName, amount, vendor, categories_id, userId, message];
   console.log(inputValue);
-  const addIntoExpenseSQL = 'INSERT INTO expenses (date, name, amount, vendor, categories_id, user_id, message, receipt_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';
+  const addIntoExpenseSQL = 'INSERT INTO expenses (date, name, amount, vendor, categories_id, user_id, message) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *';
   pool
     .query(addIntoExpenseSQL, inputValue)
     .then((result) => {
@@ -320,7 +326,7 @@ app.post('/expense', (req, res) => {
     .catch((error) => console.log(error.stack));
 });
 app.get('/', (req, res) => {
-  res.render('index');
+  res.send('hello');
 });
 app.get('/errorpage', (req, res) => {
   res.render('errorPage');
