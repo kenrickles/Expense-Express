@@ -33,37 +33,25 @@ if (process.env.ENV === 'PRODUCTION') {
 }
 // Create a new instance of Pool object
 const pool = new Pool(poolConfig);
-
 // start express and create an express app
 const app = express();
-// Create a new instance of Pool object
-// const { Pool } = pg;
-// const pool = new Pool(poolConfig);
-// console.log(poolConfig);
-
 // adding moment to ejs
 app.locals.moment = moment;
-
 // setting the port number
 const PORT = 3004 || process.env.MY_ENV_VAR;
-
 // overiding post to allow ?method = put or delete
 app.use(methodOverride('_method'));
-
 // allow the use of `the folder public
 app.use(express.static('public/cssFiles'));
 app.use(express.static('public'));
 app.use(express.static('public/uploads'));
-
+app.use(express.static('public/js'));
 // set the view engine to ejs
 app.set('view engine', 'ejs');
-
 // accepting request to form the data
 app.use(express.urlencoded({ extended: false }));
-
 // middleware that allows cookies to be parsed
 app.use(cookieParser());
-
 // use to flash message back
 app.use(session({
   /* the longer key it is the more random it is, the more secure it is.
