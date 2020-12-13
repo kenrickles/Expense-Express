@@ -95,7 +95,7 @@ export function newReceipt(req, res) {
     res.redirect('errorPage');
   }
   const expId = req.query.expenseId;
-  res.render('fileUpload', { expId });
+  res.render('fileupload', { expId });
 }
 export function createNewReceipt(req, res) {
   if (req.cookies.loggedIn === undefined) {
@@ -104,9 +104,9 @@ export function createNewReceipt(req, res) {
   upload(req, res, (error) => {
     const expId = req.body.expenseId;
     if (error) {
-      res.render('fileUpload', { msg: error });
+      res.render('fileupload', { msg: error });
     } else if (req.file === undefined) {
-      res.render('fileUpload', { msg: 'Error: No File Selected!' });
+      res.render('fileupload', { msg: 'Error: No File Selected!' });
     } else if (expId !== 'undefined') {
       const inputValue = [`/uploads/${req.file.filename}`];
       const uploadQuery = 'INSERT INTO receipts (imgurl) VALUES ($1) RETURNING *;';
