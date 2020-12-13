@@ -16,12 +16,12 @@ CREATE TABLE "expenses" (
   "message" VARCHAR(255),
   "receipt_id" INT,
   "name" text,
-  "vendor" text,
+  "vendor" text
 );
 
 CREATE TABLE "receipts" (
   "id" SERIAL PRIMARY KEY,
-  "imgurl" TEXT,
+  "imgurl" TEXT
 );
 
 CREATE TABLE "categories" (
