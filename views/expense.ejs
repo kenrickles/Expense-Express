@@ -42,20 +42,19 @@
     </table>
       <% }) %>
   </div>
-  <div class="container text-right">
-    <form action="<%= expense[0].id %>/delete?_method=DELETE"method="POST">
-    <input type="submit" value="Delete"class="btn btn-danger delete-button"/>
-  </form>
+  <div class="container row float-right">
   <form class="cloud-form" action="/upload" method="GET">
     <input type="hidden" name="expenseId" id="expenseId" value="<%= expense[0].id %>">
     <% if(expense[0].receipt_imagelink !== null) { %>
-      <input class="btn btn-outline-success" type="submit" value="Edit Receipt"/>
+      <input class="btn btn-outline-success buttons-control" type="submit" value="Edit Receipt"/>
       <% } else { %>
-        <input class="btn btn-outline-success" type="submit" value="Add Receipt"/>
+        <input class="btn btn-outline-success buttons-control" type="submit" value="Add Receipt"/>
         <% } %> 
-    <a href="/expense/<%=expense[0].id%>/edit" class="btn btn-outline-success" role="button"> Edit</a>
+    <a href="/expense/<%=expense[0].id%>/edit" class="btn btn-outline-success buttons-control" role="button"> Edit</a>
   </form>
-      
+  <form action="<%= expense[0].id %>/delete?_method=DELETE"method="POST">
+    <input type="submit" value="Delete"class="btn btn-danger delete-button buttons-control"/>
+  </form>
   </div>
 </div>
 </div>

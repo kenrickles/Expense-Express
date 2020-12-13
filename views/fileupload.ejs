@@ -1,4 +1,5 @@
 <%- include('header' , {cssFilePath: '/login.css'}) -%>
+<link rel="stylesheet" href="/Drag--Drop-Upload-Form.css">
 
   <title>File Upload</title>
 </head>
@@ -7,20 +8,13 @@
     <h1> File Upload</h1>
     <%= typeof msg != 'undefined' ? msg : '' %> 
     <form class="cloud-form" action="/upload" method="POST" enctype="multipart/form-data">
-      <div class="file-field input-field">
-        <div class="btn grey">
-          <span>File</span>
-          <input name="myImage" type="file"/>
-        </div>
-        <div class="file-path-wrapper">
-          <input class="file-path validate" type="text">
-        </div>
-      </div>
-      <button type="submit" class="btn">Submit</button> 
-      <input type="hidden" name="expenseId" value="<%=expId%>">
+   <div class="dashed_upload"></div>
+   <hr>
+   <div class="form-group files color"><input type="file" name="myImage"></div>
+   <div class="container buttonholder">
+    <input type="submit" class="btn btn-outline-primary" />
+    <input type="hidden" name="expenseId" value="<%=expId%>">
+    </div>  
     </form>
-    <img src="<%= typeof file != 'undefined' ? file : '' %> " class="responsive-img">
-  </div>
-
-
+</div>
   <%- include('footer'); -%>

@@ -1,7 +1,16 @@
 body {
   margin: 0px;
 }
-
+.buttons-control {
+  margin-left: 20px;
+  margin-right: 20px;
+  text-align: center;
+}
+.buttons-control2 {
+  margin-top: 30px;
+  margin-left: 120px;
+  text-align: center;
+}
 #date {
   width: 50%;
   text-align: center;
