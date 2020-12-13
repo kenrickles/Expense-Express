@@ -7,26 +7,21 @@ CREATE TABLE "users" (
   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-WITH new_expense as (
-INSERT INTO categories (name)
-)
-INSERT INTO expenses (date, name, amount,) VALUES()
-
 CREATE TABLE "expenses" (
   "id" SERIAL PRIMARY KEY,
   "user_id" INT,
   "categories_id" INT,
   "date" DATE NOT NULL,
-  "amount" INT,
+  "amount" numeric(10,2),
   "message" VARCHAR(255),
-  "receipt_id" INT
+  "receipt_id" INT,
+  "name" text,
+  "vendor" text,
 );
 
 CREATE TABLE "receipts" (
   "id" SERIAL PRIMARY KEY,
   "imgurl" TEXT,
-  "vendor name" TEXT,
-  "item name" TEXT
 );
 
 CREATE TABLE "categories" (

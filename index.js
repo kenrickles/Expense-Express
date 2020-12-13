@@ -38,7 +38,7 @@ const app = express();
 // adding moment to ejs
 app.locals.moment = moment;
 // setting the port number
-const PORT = 3004 || process.env.MY_ENV_VAR;
+const PORT = 3004 || process.argv[2];
 // overiding post to allow ?method = put or delete
 app.use(methodOverride('_method'));
 // allow the use of `the folder public
