@@ -127,7 +127,6 @@ export function userSignUp(req, res) {
               if (err) {
                 console.log(err);
               }
-              console.log(results.rows);
               req.flash('success_msg', 'You are now registered. Please log in');
               res.redirect('/login');
             },
