@@ -113,7 +113,6 @@ export function userSignUp(req, res) {
         if (error) {
           console.log(error);
         }
-        console.log(result.rows);
         // validation to see if email has been registered
         if (result.rows.length > 0) {
           errors.push({ message: 'Email already registered' });

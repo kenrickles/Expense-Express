@@ -1,7 +1,7 @@
 CREATE TABLE "users" (
   "id" SERIAL PRIMARY KEY,
   "username" VARCHAR(37) UNIQUE,
-  "password" VARCHAR(37),
+  "password" TEXT,
   "name" TEXT,
   "email" TEXT UNIQUE,
   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
