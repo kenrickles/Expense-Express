@@ -28,6 +28,3 @@ CREATE TABLE "categories" (
   "id" SERIAL PRIMARY KEY,
   "name" TEXT
 );
-
-
-sudo DB_PASSWORD='newPassword' ENV='PRODUCTION' node index.js 80
