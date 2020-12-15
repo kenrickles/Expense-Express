@@ -19,7 +19,13 @@ if (process.env.ENV === 'PRODUCTION') {
     database: 'expense-express',
     port: 5432,
   };
-} else {
+} else if (process.env.DATABASE_URL) {
+  // pg will take in the entire value and use it to connect
+  poolConfig = {
+    connectionString: process.env.DATABASE,
+  };
+}
+else {
   poolConfig = {
     user: process.env.USER,
     host: 'localhost',
