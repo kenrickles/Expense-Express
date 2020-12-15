@@ -14,16 +14,7 @@ const SALT = process.env.MY_ENV_VAR;
 // set the way we will connect to the server
 const { Pool } = pg;
 let poolConfig;
-if (process.env.ENV === 'PRODUCTION') {
-  poolConfig = {
-    user: 'postgres',
-    // set DB_PASSWORD as an environment variable for security.
-    password: process.env.DB_PASSWORD,
-    host: 'localhost',
-    database: 'expense-express',
-    port: 5432,
-  };
-} else if (process.env.DATABASE_URL) {
+if (process.env.DATABASE_URL) {
   // pg will take in the entire value and use it to connect
   poolConfig = {
     connectionString: process.env.DATABASE,
