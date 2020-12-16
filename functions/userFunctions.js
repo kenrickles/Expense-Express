@@ -5,26 +5,44 @@ import jsSHA from 'jssha';
 const SALT = process.env.MY_ENV_VAR;
 // set the way we will connect to the server
 const { Pool } = pg;
-let poolConfig;
-if (process.env.ENV === 'PRODUCTION') {
-  poolConfig = {
-    user: 'postgres',
-    // set DB_PASSWORD as an environment variable for security.
-    password: process.env.DB_PASSWORD,
-    host: 'localhost',
-    database: 'expense-express',
-    port: 5432,
+// let poolConfig;
+// if (process.env.ENV === 'PRODUCTION') {
+//   poolConfig = {
+//     user: 'postgres',
+//     // set DB_PASSWORD as an environment variable for security.
+//     password: process.env.DB_PASSWORD,
+//     host: 'localhost',
+//     database: 'expense-express',
+//     port: 5432,
+//   };
+// } else {
+//   poolConfig = {
+//     user: process.env.USER,
+//     host: 'localhost',
+//     database: 'expense-express',
+//     port: 5432, // Postgres server always runs on this port
+//   };
+// }
+// // Create a new instance of Pool object
+// const pool = new Pool(poolConfig);
+let pgConnectionConfigs;
+
+// test to see if the env var is set. Then we know we are in Heroku
+if (process.env.DATABASE_URL) {
+  // pg will take in the entire value and use it to connect
+  pgConnectionConfigs = {
+    connectionString: process.env.DATABASE_URL,
   };
 } else {
-  poolConfig = {
+  // this is the same value as before
+  pgConnectionConfigs = {
     user: process.env.USER,
     host: 'localhost',
     database: 'expense-express',
     port: 5432, // Postgres server always runs on this port
   };
 }
-// Create a new instance of Pool object
-const pool = new Pool(poolConfig);
+const pool = new Pool(pgConnectionConfigs);
 
 export function userLogin(req, res) {
   const values = [req.body.email];
